@@ -1,7 +1,7 @@
 import './index.css'
 
 const ItemCard = props => {
-  const {imageDetails, setActiveImageId} = props
+  const {imageDetails, setActiveImageId, renderRandomImage} = props
   const {thumbnailUrl, category, id} = imageDetails
 
   const onClickCardImage = () => {

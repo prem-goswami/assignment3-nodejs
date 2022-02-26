@@ -255,12 +255,99 @@ class Home extends Component {
     activeTabId: tabsList[0].tabId,
     activeImageId: '',
     randomImage: imagesList[0].imageUrl,
-    InitialTime: 60,
+    InitialTime: 105,
   }
 
   componentDidMount() {
+    this.timeInterval = setInterval(this.startCountdown, 1000)
+  }
+
+  startCountdown = () => {
     const {InitialTime} = this.state
-    this.timeInterval = setInterval(InitialTime, 1000)
+    if (InitialTime > 0) {
+      this.setState(prevState => ({
+        InitialTime: prevState.InitialTime - 1,
+      }))
+    }
+  }
+
+  renderScoreCard = () => (
+    <div className="scoreCardContainer">
+      <div className="scoreCard">
+        <img
+          src="https://assets.ccbp.in/frontend/react-js/match-game-trophy.png"
+          alt="trophy"
+          className="trophyImage"
+        />
+        <p className="yourScore">Your Score</p>
+        <button
+          type="button"
+          className="resetButton"
+          onClick={this.resetButtonClicked}
+        >
+          <img
+            src="https://assets.ccbp.in/frontend/react-js/match-game-play-again-img.png"
+            alt="reset"
+            className="resetIcon"
+          />
+          <p>Reset</p>
+        </button>
+      </div>
+    </div>
+  )
+
+  resetButtonClicked = () => {
+    const {InitialTime} = this.state
+    this.setState({InitialTime: 5})
+  }
+
+  renderGameContainer = () => {
+    const {activeTabId, activeImageId, randomImage} = this.state
+    const filteredImages = imagesList.filter(
+      eachItem => eachItem.category === activeTabId,
+    )
+
+    return (
+      <div>
+        <div className="mainImageContainer">
+          <img
+            src={randomImage}
+            alt={imagesList[0].category}
+            className="mainImage"
+          />
+        </div>
+
+        <ul className="itemsListContainer">
+          {tabsList.map(eachitem => (
+            <TabItems
+              tabItemDetails={eachitem}
+              key={eachitem.tabId}
+              setActiveTabId={this.setActiveTabId}
+              isActive={eachitem.tabId === activeTabId}
+            />
+          ))}
+        </ul>
+        <div className="displayImagesContainer">
+          <ul className="imagesContainer">
+            {filteredImages.map(eachItem => (
+              <ItemCard
+                imageDetails={eachItem}
+                key={eachItem.id}
+                setActiveImageId={this.setActiveImageId}
+              />
+            ))}
+          </ul>
+        </div>
+      </div>
+    )
+  }
+
+  checkTimer = () => {
+    const {InitialTime} = this.state
+    if (InitialTime === 0) {
+      return this.renderScoreCard()
+    }
+    return this.renderGameContainer()
   }
 
   setActiveTabId = tabId => {
@@ -308,43 +395,10 @@ class Home extends Component {
   }
 
   render() {
-    const {activeTabId, activeImageId, randomImage} = this.state
-    const filteredImages = imagesList.filter(
-      eachItem => eachItem.category === activeTabId,
-    )
-
     return (
       <div className="bgContainer">
         {this.renderNavContainer()}
-        <div className="mainImageContainer">
-          <img
-            src={randomImage}
-            alt={imagesList[0].category}
-            className="mainImage"
-          />
-        </div>
-
-        <ul className="itemsListContainer">
-          {tabsList.map(eachitem => (
-            <TabItems
-              tabItemDetails={eachitem}
-              key={eachitem.tabId}
-              setActiveTabId={this.setActiveTabId}
-              isActive={eachitem.tabId === activeTabId}
-            />
-          ))}
-        </ul>
-        <div className="displayImagesContainer">
-          <ul className="imagesContainer">
-            {filteredImages.map(eachItem => (
-              <ItemCard
-                imageDetails={eachItem}
-                key={eachItem.id}
-                setActiveImageId={this.setActiveImageId}
-              />
-            ))}
-          </ul>
-        </div>
+        {this.checkTimer()}
       </div>
     )
   }
