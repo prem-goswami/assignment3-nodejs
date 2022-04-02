@@ -11,7 +11,7 @@ const ItemCard = props => {
   return (
     <li className="imagesList">
       <button type="button" className="butt" onClick={onClickCardImage}>
-        <img src={thumbnailUrl} alt={category} className="imageSizing" />
+        <img src={thumbnailUrl} alt="thumbnail" className="imageSizing" />
       </button>
     </li>
   )

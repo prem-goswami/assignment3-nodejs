@@ -255,7 +255,9 @@ class Home extends Component {
     activeTabId: tabsList[0].tabId,
     activeImageId: '',
     randomImage: imagesList[0].imageUrl,
-    InitialTime: 105,
+    InitialTime: 60,
+    randomImageId: '',
+    count: 0,
   }
 
   componentDidMount() {
@@ -290,7 +292,7 @@ class Home extends Component {
             alt="reset"
             className="resetIcon"
           />
-          <p>Reset</p>
+          <p>PLAY AGAIN</p>
         </button>
       </div>
     </div>
@@ -298,7 +300,7 @@ class Home extends Component {
 
   resetButtonClicked = () => {
     const {InitialTime} = this.state
-    this.setState({InitialTime: 5})
+    this.setState({InitialTime: 60})
   }
 
   renderGameContainer = () => {
@@ -310,11 +312,7 @@ class Home extends Component {
     return (
       <div>
         <div className="mainImageContainer">
-          <img
-            src={randomImage}
-            alt={imagesList[0].category}
-            className="mainImage"
-          />
+          <img src={randomImage} alt="match" className="mainImage" />
         </div>
 
         <ul className="itemsListContainer">
@@ -343,8 +341,8 @@ class Home extends Component {
   }
 
   checkTimer = () => {
-    const {InitialTime} = this.state
-    if (InitialTime === 0) {
+    const {InitialTime, randomImageId, activeImageId} = this.state
+    if (InitialTime === 0 || randomImageId !== activeImageId) {
       return this.renderScoreCard()
     }
     return this.renderGameContainer()
@@ -362,24 +360,24 @@ class Home extends Component {
   }
 
   renderRandomImage = () => {
-    const image = imagesList.sort(() => Math.random())
-    this.setState({randomImage: image.imageUrl})
+    const image = imagesList[Math.floor(Math.random() * 30)]
+    this.setState({randomImage: image.imageUrl, randomImageId: image.id})
   }
 
   renderNavContainer = () => {
-    const {InitialTime} = this.state
+    const {InitialTime, count} = this.state
 
     return (
-      <div className="navContainer">
+      <ul className="navContainer">
         <img
           src="https://assets.ccbp.in/frontend/react-js/match-game-website-logo.png"
           alt="website logo"
           className="imageSizingHeader"
         />
-        <div className="scoreContainer">
+        <li className="scoreContainer">
           <div className="score">
             <p>Score: </p>
-            <p>0</p>
+            <li>{count}</li>
           </div>
           <div className="score">
             <img
@@ -387,10 +385,10 @@ class Home extends Component {
               alt="timer"
               className="timerLogo"
             />
-            <p>{InitialTime}</p>
+            <p>{InitialTime} sec</p>
           </div>
-        </div>
-      </div>
+        </li>
+      </ul>
     )
   }
 
